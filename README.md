@@ -4,6 +4,8 @@ A high-performance Python scanner and competition trade planner built specifical
 
 Designed for participants managing **Rp 200,000,000** capital who only check their phones a few times a day and need high-conviction momentum swing picks compliant with all tournament rules.
 
+> 📖 **Comprehensive Guide & Strategy Playbook:** For a deep dive into the competition framework, momentum mathematics, Fraksi BEI rounding, and exact daily routines, see **[FINTRAC_GUIDE.md](FINTRAC_GUIDE.md)**.
+
 ---
 
 ## 🏆 Competition Rules & Constraints Enforced
