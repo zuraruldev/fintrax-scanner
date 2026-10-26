@@ -39,3 +39,28 @@ def test_trade_tracker_quota_verification(tmp_path):
     # 11 trades across 2 tickers -> quota completed
     assert status["unique_tickers"] == 2
     assert status["quota_completed"] is True
+
+def test_trade_validation_and_realized_pnl(tmp_path):
+    ledger_file = tmp_path / "trades.json"
+    tracker = TradeTracker(file_path=str(ledger_file), initial_capital=200_000_000.0)
+
+    # Invalid lots / price
+    with pytest.raises(ValueError):
+        tracker.record_trade("buy", "BBCA", 0, 10000.0)
+    with pytest.raises(ValueError):
+        tracker.record_trade("buy", "BBCA", 10, -500.0)
+
+    # Cannot sell unowned stock or oversell
+    with pytest.raises(ValueError):
+        tracker.record_trade("sell", "BBCA", 10, 10000.0)
+
+    tracker.record_trade("buy", "BBCA", 100, 10000.0)
+    with pytest.raises(ValueError):
+        tracker.record_trade("sell", "BBCA", 150, 11000.0)
+
+    # Valid sell records realized PnL
+    trade = tracker.record_trade("sell", "BBCA", 40, 11000.0)
+    assert trade["realized_pnl"] == 40 * 100 * (11000.0 - 10000.0) # +4,000,000
+    status = tracker.get_status()
+    assert status["realized_pnl"] == 4_000_000.0
+

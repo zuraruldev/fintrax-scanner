@@ -35,9 +35,27 @@ class TradeTracker:
         if clean_action not in ["buy", "sell"]:
             raise ValueError(f"Invalid trade action: {action}. Must be 'buy' or 'sell'.")
             
+        if lots <= 0:
+            raise ValueError(f"Invalid lot size: {lots}. Must be greater than 0.")
+        if price <= 0:
+            raise ValueError(f"Invalid price: {price}. Must be greater than 0.")
+
         clean_ticker = ticker.strip().upper()
         if clean_ticker.endswith(".JK"):
             clean_ticker = clean_ticker[:-3]
+
+        current_status = self.get_status()
+        pos = current_status["positions"].get(clean_ticker, {"lots": 0, "avg_price": 0.0})
+        held_lots = pos["lots"]
+        avg_buy_price = pos["avg_price"]
+
+        realized_pnl = 0.0
+        if clean_action == "sell":
+            if held_lots < lots:
+                raise ValueError(
+                    f"Cannot sell {lots} lots of {clean_ticker}; you currently hold {held_lots} lots."
+                )
+            realized_pnl = float(lots * 100 * (price - avg_buy_price))
 
         trade_entry = {
             "id": len(self.data["trades"]) + 1,
@@ -46,7 +64,8 @@ class TradeTracker:
             "ticker": clean_ticker,
             "lots": int(lots),
             "price": float(price),
-            "value": float(lots * 100 * price)
+            "value": float(lots * 100 * price),
+            "realized_pnl": realized_pnl
         }
         self.data["trades"].append(trade_entry)
         self._save()
@@ -57,6 +76,7 @@ class TradeTracker:
         positions: Dict[str, Dict[str, Any]] = {}
         unique_tickers = set()
         trades = self.data.get("trades", [])
+        total_realized_pnl = 0.0
 
         for t in trades:
             ticker = t["ticker"]
@@ -65,6 +85,7 @@ class TradeTracker:
             lots = t["lots"]
             price = t["price"]
             trade_val = float(lots * 100 * price)
+            total_realized_pnl += float(t.get("realized_pnl", 0.0))
 
             if action == "buy":
                 cash -= trade_val
@@ -102,6 +123,7 @@ class TradeTracker:
             "cash": cash,
             "portfolio_value": portfolio_val,
             "total_assets": cash + portfolio_val,
+            "realized_pnl": total_realized_pnl,
             "positions": positions,
             "trades": trades
         }

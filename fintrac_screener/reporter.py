@@ -14,12 +14,14 @@ def render_markdown_report(setups: List[Dict[str, Any]], status: Dict[str, Any])
     cash = status.get("cash", 0.0)
     portfolio_val = status.get("portfolio_value", 0.0)
     total_assets = status.get("total_assets", cash + portfolio_val)
+    realized_pnl = status.get("realized_pnl", 0.0)
     
     quota_badge = "✅ COMPLETED" if quota_met else "⚠️ IN PROGRESS"
     lines.append(f"- **Progress to 10-Trade Quota:** {total_trades} / 10 trades ({quota_badge})")
     lines.append(f"- **Distinct Tickers Traded:** {unique_tickers} (Minimum 2 required)")
     lines.append(f"- **Cash Balance:** {format_idr(cash)}")
     lines.append(f"- **Portfolio Market Value:** {format_idr(portfolio_val)}")
+    lines.append(f"- **Realized Profit/Loss:** {format_idr(realized_pnl)}")
     lines.append(f"- **Total Assets (Leaderboard Rank Score):** **{format_idr(total_assets)}**")
     lines.append("")
     
@@ -58,6 +60,7 @@ def render_terminal_status(status: Dict[str, Any]) -> str:
     cash = status.get("cash", 0.0)
     portfolio_val = status.get("portfolio_value", 0.0)
     total_assets = status.get("total_assets", cash + portfolio_val)
+    realized_pnl = status.get("realized_pnl", 0.0)
     
     quota_str = "[OK] Met" if quota_met else f"[WAIT] Need {max(0, 10 - total_trades)} more trades"
     out = [
@@ -67,6 +70,7 @@ def render_terminal_status(status: Dict[str, Any]) -> str:
         f"  Total Assets (Leaderboard): {format_idr(total_assets)}",
         f"  Available Cash:            {format_idr(cash)}",
         f"  Portfolio Value:           {format_idr(portfolio_val)}",
+        f"  Realized PnL:              {format_idr(realized_pnl)}",
         "-" * 60,
         f"  Trade Quota Progress:      {total_trades} / 10 ({quota_str})",
         f"  Unique Tickers Traded:     {unique_tickers} (Min 2 required)",

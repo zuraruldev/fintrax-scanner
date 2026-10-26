@@ -74,8 +74,11 @@ def compute_momentum_score(candles: Dict[str, Any]) -> Dict[str, Any]:
     ema20 = compute_ema(closes, 20)
     ema_trend = bool(current_price >= ema9[-1] >= ema20[-1])
     
-    change_1d = ((closes[-1] - closes[-2]) / closes[-2] * 100.0) if len(closes) >= 2 else 0.0
-    change_5d = ((closes[-1] - closes[-6]) / closes[-6] * 100.0) if len(closes) >= 6 else change_1d
+    prev1 = closes[-2] if len(closes) >= 2 else 0.0
+    prev5 = closes[-6] if len(closes) >= 6 else prev1
+    
+    change_1d = ((closes[-1] - prev1) / prev1 * 100.0) if prev1 > 0 else 0.0
+    change_5d = ((closes[-1] - prev5) / prev5 * 100.0) if prev5 > 0 else change_1d
     
     if 50.0 <= rsi <= 72.0:
         rsi_fitness = 100.0

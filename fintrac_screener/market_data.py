@@ -16,19 +16,19 @@ def parse_yahoo_chart_response(data: dict) -> Optional[Dict[str, Any]]:
         return None
     
     first = results[0]
-    meta = first.get("meta", {})
-    timestamps = first.get("timestamp", [])
-    indicators = first.get("indicators", {})
-    quotes = indicators.get("quote", [])
+    meta = first.get("meta") or {}
+    timestamps = first.get("timestamp") or []
+    indicators = first.get("indicators") or {}
+    quotes = indicators.get("quote") or []
     if not quotes or len(quotes) == 0:
         return None
     
     quote = quotes[0]
-    raw_opens = quote.get("open", [])
-    raw_highs = quote.get("high", [])
-    raw_lows = quote.get("low", [])
-    raw_closes = quote.get("close", [])
-    raw_volumes = quote.get("volume", [])
+    raw_opens = quote.get("open") or []
+    raw_highs = quote.get("high") or []
+    raw_lows = quote.get("low") or []
+    raw_closes = quote.get("close") or []
+    raw_volumes = quote.get("volume") or []
     
     clean_timestamps = []
     clean_opens = []

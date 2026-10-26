@@ -35,3 +35,17 @@ def test_compute_momentum_score():
     assert metrics["score"] > 0
     assert metrics["rvol"] >= 2.5
     assert metrics["ema_trend"] is True
+
+def test_compute_momentum_score_zero_or_flat_close():
+    candles = {
+        "closes": [0.0] * 30,
+        "volumes": [1000] * 30,
+        "highs": [0.0] * 30,
+        "lows": [0.0] * 30,
+        "opens": [0.0] * 30,
+        "current_price": 0.0
+    }
+    # Should not raise ZeroDivisionError
+    metrics = compute_momentum_score(candles)
+    assert metrics["change_1d"] == 0.0
+    assert metrics["change_5d"] == 0.0
