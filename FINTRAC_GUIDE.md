@@ -94,6 +94,34 @@ python3 screener.py scan
 - Open `signals.md` or look at your terminal. Pick the top 2 or 3 setups.
 - At **09.00 WIB**, open your IDX Mobile app and submit Buy orders with the exact **Lots** listed.
 
+#### 💡 Action Guide: How to Act on the Scan Output
+When you run `python3 screener.py scan` and see the **TOP MOMENTUM SETUPS** table:
+```
+Ticker     Price      Lots       TP1 (+4.5%)    TP2 (+8.5%)    SL (-2.8%)     RVOL     RSI   
+--------------------------------------------------------------------------------
+TLKM.JK    Rp 2.250   296 Lots   Rp 2.350       Rp 2.440       Rp 2.190       3.0    x 66.2  
+BMRI.JK    Rp 3.910   170 Lots   Rp 4.090       Rp 4.240       Rp 3.800       2.1    x 62.9  
+BBRI.JK    Rp 2.910   229 Lots   Rp 3.040       Rp 3.160       Rp 2.830       1.2    x 57.8  
+```
+Here is your exact execution flow:
+1. **Open IDX Mobile:** Login to your registered account on your authorized phone.
+2. **Place the Buy Orders:**
+   - Tap Buy -> search `TLKM` -> input **296 Lots** -> price **2250**.
+   - Tap Buy -> search `BMRI` -> input **170 Lots** -> price **3910**.
+   - Tap Buy -> search `BBRI` -> input **229 Lots** -> price **2910**.
+3. **Log the Trades in the System:** Once your orders are filled in the app, sync them locally so your 10-trade quota and cash are tracked:
+   ```bash
+   python3 screener.py log buy TLKM 296 2250
+   python3 screener.py log buy BMRI 170 3910
+   python3 screener.py log buy BBRI 229 2910
+   ```
+4. **Setting Exit Triggers:**
+   - Note the **TP1** and **SL** prices from the table on your phone notes or order book.
+   - When a stock climbs to **TP1** (e.g. TLKM reaches 2350), sell half (148 lots) to bank profit and log it:
+     `python3 screener.py log sell TLKM 148 2350`
+   - If a stock drops to **SL** (e.g. TLKM hits 2190), exit immediately to preserve capital:
+     `python3 screener.py log sell TLKM 296 2190`
+
 ### Checkpoint 2: Midday Break Review (12.00 – 13.20 WIB)
 During the midday session break, check if any of your stocks hit TP1 or if fresh afternoon setups appeared:
 ```bash

@@ -56,6 +56,24 @@ Options:
 
 This command outputs a ranked terminal table and creates `signals.md` with exact lot sizes ready to be entered into IDX Mobile.
 
+### 💡 What To Do When You See The Results (Action Steps)
+When the scan finishes and shows the **TOP MOMENTUM SETUPS** table:
+1. **Open IDX Mobile on your phone** during market hours (09:00 WIB).
+2. **Submit Buy Orders:** For the top 3 stocks displayed, place buy orders using the exact values from the table:
+   - **Ticker:** Enter the stock symbol (e.g. `TLKM`, `BMRI`, `BBRI`).
+   - **Price:** Enter the current market or recommended price (e.g. `2250`).
+   - **Lot:** Enter the recommended lot size (e.g. `296 Lots`).
+3. **Log the executions:** Once filled on your phone, log them in the CLI to keep your 10-trade quota updated:
+   ```bash
+   python3 screener.py log buy TLKM 296 2250
+   python3 screener.py log buy BMRI 170 3910
+   python3 screener.py log buy BBRI 229 2910
+   ```
+4. **Manage Exits:**
+   - When a stock hits **TP1 (+4.5%)**, sell **50% of your lots** on IDX Mobile, then log: `python3 screener.py log sell TLKM 148 2350`.
+   - When a stock hits **TP2 (+8.5%)**, sell the remaining lots: `python3 screener.py log sell TLKM 148 2440`.
+   - If a stock drops to **SL (-2.8%)**, cut loss immediately: `python3 screener.py log sell TLKM 296 2190`.
+
 ### 3. Midday Check (12:00 WIB)
 Run during the midday break to evaluate Session 1 intraday volume and price action:
 ```bash
